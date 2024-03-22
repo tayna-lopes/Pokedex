@@ -15,8 +15,7 @@ export default function PokemonArea() {
     const [infoPokemon, setInfoPokemon] = useState({});
     const [infoPokemonSpecies, setInfoPokemonSpecies] = useState({});
     const [infoPokemonLocation, setInfoPokemonLocation] = useState({});
-    const Location = useState('');
-
+    const [infoPokemonEvolution, setInfoPokemonEvolution] = useState({});
 
 
     const [infoFilled, setInfoFilled] = useState(false);
@@ -39,10 +38,19 @@ export default function PokemonArea() {
         setInfoPokemonLocation(data);
     }
 
+    const getPokemonEvolution = async () => {
+        const url = 'evolution-chain/'+ infoPokemon.id;
+        const { data } = await api.get(url);
+        setInfoPokemonEvolution(data);
+        console.log(data)
+    }
+
     const callFunctions = async () => {
         await getPokemonByName();
         await getPokemonSpecies();
         await getPokemonLocation();
+        await getPokemonEvolution();
+
         setInfoFilled(true);
     }
 
@@ -53,12 +61,12 @@ export default function PokemonArea() {
     return (
         <View style={styles.container}>
             <View >
-                <Text style={styles.title}>Buscar Pokémon</Text>
+                <Text style={styles.title}>Search Pokémon Data</Text>
             </View>
 
             <View style={styles.search}>
                 <TextInput style={styles.input}
-                    placeholder='Insira o nome do Pokémon'
+                    placeholder='Search Pokémon by name or number'
                     onChangeText={newText => setText(newText)}
                     defaultValue={text} />
                 <TouchableOpacity style={styles.actionButton}
@@ -88,6 +96,7 @@ export default function PokemonArea() {
                                 <View style={styles.type}>
                                     <Text style={styles.description}>Basic Info: </Text>
                                     <Text>Type: {capitalizePhrase(infoPokemon.types[0].type.name)}</Text>
+                                    <Text>Evolution: {capitalizePhrase(infoPokemonEvolution.chain.evolves_to[0].species.name)}</Text>
                                     <Text>Location: {capitalizePhrase(infoPokemonLocation[0].version_details[0].version.name)}, {capitalizePhrase(infoPokemonLocation[0].location_area.name)}</Text>
                                     <Text>Generation: {infoPokemonSpecies.generation.name.slice(11).toUpperCase()}</Text>
                                 </View>
