@@ -39,10 +39,8 @@ export default function PokemonArea() {
     }
 
     const getPokemonEvolution = async () => {
-        const url = 'evolution-chain/'+ infoPokemon.id;
-        const { data } = await api.get(url);
+        const { data } = await api.get(infoPokemonSpecies.evolution_chain.url);
         setInfoPokemonEvolution(data);
-        console.log(data)
     }
 
     const callFunctions = async () => {
@@ -97,8 +95,12 @@ export default function PokemonArea() {
                                     <Text style={styles.description}>Basic Info: </Text>
                                     <Text>Type: {capitalizePhrase(infoPokemon.types[0].type.name)}</Text>
                                     <Text>Evolution: {capitalizePhrase(infoPokemonEvolution.chain.evolves_to[0].species.name)}</Text>
-                                    <Text>Location: {capitalizePhrase(infoPokemonLocation[0].version_details[0].version.name)}, {capitalizePhrase(infoPokemonLocation[0].location_area.name)}</Text>
                                     <Text>Generation: {infoPokemonSpecies.generation.name.slice(11).toUpperCase()}</Text>
+                                    {infoPokemonLocation.length > 0 ? (
+                                        <Text>Location: {capitalizePhrase(infoPokemonLocation[0].version_details[0].version.name)}, {capitalizePhrase(infoPokemonLocation[0].location_area.name)}</Text>
+                                    ) : (
+                                        <Text>Location: Only obteined by evolution or trading. </Text>
+                                    )}
                                 </View>
 
                                 <Text style={styles.description}>Description: </Text>
