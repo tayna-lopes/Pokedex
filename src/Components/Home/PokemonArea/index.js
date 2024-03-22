@@ -46,6 +46,10 @@ export default function PokemonArea() {
         setInfoFilled(true);
     }
 
+    const capitalizePhrase = (phrase) => {
+        return phrase.length ? phrase.charAt(0).toUpperCase().replace(/-/g,' ') + phrase.slice(1).replace(/-/g,' ') : phrase
+    }
+
     return (
         <View style={styles.container}>
             <View >
@@ -82,10 +86,13 @@ export default function PokemonArea() {
                             </View>
                             <View style={styles.infoArea2}>
                                 <View style={styles.type}>
-                                    <Text>Type: {infoPokemon.types[0].type.name.charAt(0).toUpperCase() + infoPokemon.types[0].type.name.slice(1).toLowerCase()}</Text>
-                                    <Text>Location: {infoPokemonLocation[0].version_details[0].version.name.charAt(0).toUpperCase()+ infoPokemonLocation[0].version_details[0].version.name.slice(1).toLowerCase()}, {infoPokemonLocation[0].location_area.name.replace(/-/g,' ').charAt(0).toUpperCase() + infoPokemonLocation[0].location_area.name.replace(/-/g,' ').slice(1).toLowerCase()}</Text>
+                                    <Text style={styles.description}>Basic Info: </Text>
+                                    <Text>Type: {capitalizePhrase(infoPokemon.types[0].type.name)}</Text>
+                                    <Text>Location: {capitalizePhrase(infoPokemonLocation[0].version_details[0].version.name)}, {capitalizePhrase(infoPokemonLocation[0].location_area.name)}</Text>
+                                    <Text>Generation: {infoPokemonSpecies.generation.name.slice(11).toUpperCase()}</Text>
                                 </View>
 
+                                <Text style={styles.description}>Description: </Text>
                                 {infoPokemonSpecies.form_descriptions.length > 0 ?(
                                     <Text style={styles.pokeDesc}>{infoPokemonSpecies.form_descriptions[0].description}</Text>
 
@@ -131,17 +138,22 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         height: 40,
-        margin: 12,
         borderWidth: 1,
         padding: 10,
         borderRadius: 8,
-        borderColor: '#D3D3D3'
+        borderColor: '#fff'
     },
     search: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#d3d3d3',
+        height: 40,
+        marginTop: 14
     },
     actionButton: {
-        marginTop: 14
+        marginTop: 3,
+        marginEnd: 10
     },
     pokemonInfo:{
         marginTop:14,
@@ -193,5 +205,9 @@ const styles = StyleSheet.create({
     },
     type: {
         marginBottom: 14
+    },
+    description:{
+        color: '#dadada',
+        fontWeight: 'bold'
     }
 });
