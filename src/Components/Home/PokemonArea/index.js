@@ -15,8 +15,6 @@ export default function PokemonArea() {
     const [infoPokemon, setInfoPokemon] = useState({});
     const [infoPokemonSpecies, setInfoPokemonSpecies] = useState({});
     const [infoPokemonLocation, setInfoPokemonLocation] = useState({});
-    const [infoPokemonEvolution, setInfoPokemonEvolution] = useState({});
-
 
     const [infoFilled, setInfoFilled] = useState(false);
 
@@ -24,6 +22,21 @@ export default function PokemonArea() {
         const url = 'pokemon/'+text.toLowerCase();
         const { data } = await api.get(url);
         setInfoPokemon(data);
+        setPokemonType();
+    }
+    const setPokemonType = () => {
+        let stringTypes = '';
+        for( let i=0; i < infoPokemon.types.length;i++){
+            stringTypes += infoPokemon.types[i].type.name;
+
+            if(i === infoPokemon.types.length - 2){
+                stringTypes += ' and ';
+            }
+            else if(i !== infoPokemon.types.length - 1){
+                stringTypes += ', ';
+            }
+        }
+        return capitalizePhrase(stringTypes);
     }
 
     const getPokemonSpecies = async () => {
@@ -38,17 +51,10 @@ export default function PokemonArea() {
         setInfoPokemonLocation(data);
     }
 
-    const getPokemonEvolution = async () => {
-        const { data } = await api.get(infoPokemonSpecies.evolution_chain.url);
-        setInfoPokemonEvolution(data);
-    }
-
     const callFunctions = async () => {
         await getPokemonByName();
         await getPokemonSpecies();
         await getPokemonLocation();
-        await getPokemonEvolution();
-
         setInfoFilled(true);
     }
 
@@ -93,22 +99,21 @@ export default function PokemonArea() {
                             <View style={styles.infoArea2}>
                                 <View style={styles.type}>
                                     <Text style={styles.description}>Basic Info: </Text>
-                                    <Text>Type: {capitalizePhrase(infoPokemon.types[0].type.name)}</Text>
-                                    <Text>Evolution: {capitalizePhrase(infoPokemonEvolution.chain.evolves_to[0].species.name)}</Text>
+                                    <Text>Type: {setPokemonType()}</Text>
                                     <Text>Generation: {infoPokemonSpecies.generation.name.slice(11).toUpperCase()}</Text>
                                     {infoPokemonLocation.length > 0 ? (
-                                        <Text>Location: {capitalizePhrase(infoPokemonLocation[0].version_details[0].version.name)}, {capitalizePhrase(infoPokemonLocation[0].location_area.name)}</Text>
+                                        <Text>Location: Pokémon {capitalizePhrase(infoPokemonLocation[0].version_details[0].version.name)}, {capitalizePhrase(infoPokemonLocation[0].location_area.name)}.</Text>
                                     ) : (
-                                        <Text>Location: Only obteined by evolution or trading. </Text>
+                                        <Text>Location: Only obtained by evolution or trading. </Text>
                                     )}
                                 </View>
 
                                 <Text style={styles.description}>Description: </Text>
                                 {infoPokemonSpecies.form_descriptions.length > 0 ?(
-                                    <Text style={styles.pokeDesc}>{infoPokemonSpecies.form_descriptions[0].description}</Text>
+                                    <Text style={styles.pokeDesc}>{infoPokemonSpecies.form_descriptions[0].description.replace(/\n/g,' ')}</Text>
 
                                 ) : (
-                                    <Text style={styles.pokeDesc}>{infoPokemonSpecies.flavor_text_entries[0].flavor_text}</Text>
+                                    <Text style={styles.pokeDesc}>{infoPokemonSpecies.flavor_text_entries[0].flavor_text.replace(/\n/g,' ')}</Text>
                                     
                                 )}
                                 
@@ -203,7 +208,6 @@ const styles = StyleSheet.create({
         flexWrap:'wrap',
         alignItems:'flex-start',
         width: '100%',
-        letterSpacing: 1.5,
     },
     pokeName:{
         fontSize: 30,
